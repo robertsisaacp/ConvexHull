@@ -1,24 +1,18 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
-def quickHull(listOfPoints):
-    convexHull = set()
-    # leftmostPoint, rightmostPoint = listOfPoints
-    # Divide into left half A and right half B by x coords
-
-    # Compute CH(A) and CH(B)
-
-    # Combine CH’s of two halves(merge step)
-    pass
+from CompGeoUtils import *
 
 
-with open('input.txt', 'rt') as f:
-    tempPoints = []
-    for lineNumber, line in enumerate(f):
-        if lineNumber != 0:
-            x, y = line.split()
-            tempPoints.append((float(x), float(y)))
+arr = to_np_array('input.txt')
+x = np.random.randint(0, 20, 20)
+y = np.random.randint(0, 20, 20)
+xy = zip(x, y)
+#arr = np.array([x, y])
+#convex_hull(arr)
+#plt.show()
 
-    # numpy array for (x, y) coordinates from temporary python list
-    points = np.array(tempPoints)
-    leftXIndex, rightXIndex = points[:, 0].argmin(), points[:, 0].argmax()
-    
+
+print(arr)
+print([x, y])
+print(xy)
