@@ -1,10 +1,10 @@
 from CompGeoUtils import *
 
 
-# Generate points
-#arr = to_np_array('input.txt')
-x, y = np.random.randint(0, 200, 30), np.random.randint(0, 200, 30)
-arr = np.array([*zip(x, y)], dtype=float)
+# Generate or extract points
+# arr = to_np_array('input.txt')
+arr = np.array([*zip(np.random.randint(0, 200, 30),
+                     np.random.randint(0, 200, 30))])
 
 # Compute Convex Hull
 convex_hull(arr)

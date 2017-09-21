@@ -53,14 +53,13 @@ def convex_hull(points):
 
     # TODO: function within function, revise
     def find_hull(s, p0, p1):
-        print(hull)
         if len(s) < 1:
             return
         else:
             # find point farthest from p0 and p1
             far_pt, max_area = s[0], 0.
             for pt in s:
-                if abs(area_of_triangle(p0, p1, pt, True)) > max_area:
+                if abs(area_of_triangle(p0, p1, pt)) > max_area:
                     far_pt, max_area = pt, abs(area_of_triangle(p0, p1, pt))
 
             # insert farthest point between p0 and p1
