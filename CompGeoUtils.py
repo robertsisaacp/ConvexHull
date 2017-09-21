@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def to_np_array(filename: str):
     with open(filename, 'rt') as f:
         tempPoints = []
@@ -16,7 +15,12 @@ def left_of(a, b, c):
     return area_of_triangle(a, b, c) > 0
 
 
+def right_of(a, b, c):
+    return not left_of(a, b, c)
+
+
 def area_of_triangle(p1, p2, p3):
+    # takes np.array points
     return np.cross((p2 - p1), (p3 - p1)) / 2.
 
 
@@ -27,59 +31,71 @@ def draw_triangle(p1, p2, p3, **kwargs):
     plt.show()
 
 
+def draw_hull(hull):
+    # sort by x value
+    #hull.sort()
+    print(type(hull))
+    r = np.array(hull)
+
+    for p, p_next in zip(hull, hull[1:]):
+        print_points(hull, 'ro', 1)
+        plt.plot([p[0], p_next[0]], [p[1], p_next[1]], 'r--')
+
+    if len(hull) > 2:
+        pass
+        plt.plot([hull[-1][0], hull[0][0]], [hull[-1][1], hull[0][1]], 'r--')
+
+
 def convex_hull(points):
-    hull, s1, s2= [], [], []
-    a, b = points[0], points[-1]
+    # separate min and max x-coord's and add to hull
+    hull = [points[0], points[-1]]
 
-    hull.append(a)
-    hull.append(b)
+
+    # separate other points into halves -- left and right of line made by x extrema
+    left_pts, right_pts = [], []
     for p in points[1:-1]:
-        if left_of(a, b, p):
-            s2.append(p)
+        if left_of(hull[0], hull[1], p):
+            left_pts.append(p)
         else:
-            s1.append(p)
+            right_pts.append(p)
 
-    print_points(hull, 'bo', 1)
-    print_points(s1, 'ro')
-    print_points(s2, 'go')
+    def find_hull(s, p0, p1):
+        if len(s) < 1:
+            return
+        else:
+            # TODO: memoize, change to list comprehension
+            # find point farthest from p0 and p1
+            far_pt, max_area = s[0], abs(area_of_triangle(p0, p1, s[0]))
+            for pt in s[1:]:
+                if (abs(area_of_triangle(p0, p1, pt)) > max_area):
+                    far_pt = pt
+
+            # insert farthest point into hull between p0 and p1
+            hull.append(far_pt)
+
+            # find remaining points (inside triangle, outside-left, outside-right)
+            out_left, out_right = [], []
+            for pt in s:
+                # Don't include far_pt
+                if abs(far_pt[0] - pt[0]) > 0 and abs(far_pt[1] - pt[1]) > 0:
+                    if right_of(p0, far_pt, pt):
+                        out_right.append(pt)
+                    if left_of(p1, far_pt, pt):
+                        out_left.append(pt)
+            # recursive call -- divide and conquer
+            find_hull(out_right, p0, far_pt)
+            find_hull(out_left, p1, far_pt)
+    # END def
+
+    find_hull(right_pts, hull[0], hull[1])
+    find_hull(left_pts, hull[1], hull[0])
+
+    print_points(right_pts, 'bo')
+    print_points(left_pts, 'go')
+    draw_hull(hull)
 
 
 def print_points(points, color='ro', z=0):
     x, y = zip(*points)
     plt.plot(x, y, color, zorder=z)
-    #plt.show()
 
-
-#def plot_hull(points, random=False):
-#    if random:
-#        x = np.random.random(20)
-#        y = np.random.random(20)
-#    else:
-#        x, y = zip(*points)
-#        test = [[], []]
-#    plt.plot(x, y, 'r', zorder=1, lw=3)
-#    plt.scatter(x, y, s=120, zorder=2)
-#    plt.title('Demo')
-#    plt.show()
-
-
-#def angle_from_points(point, center):
-#    # calculate angle between points and x-axis
-#    delta = point - center
-#    angle = np.arctan(delta[1] / delta[0])
-#    if delta[0] < 0:
-#        angle += np.pi
-#    return angle
-
-
-#def divide_hull(_points):
-#    lpoints, rpoints, center = [[], []], [[], []], _points.mean(1)
-#
-#    for point in zip(_points[0], _points[1]):
-#        if point[0] < center[0]:
-#            lpoints[0].append(point[0])
-#            lpoints[1].append(point[1])
-#        else:
-#            rpoints[0].append(point[0])
-#            rpoints[1].append(point[1])
-#    return [lpoints, rpoints]
