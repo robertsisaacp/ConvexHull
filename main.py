@@ -1,18 +1,15 @@
 from CompGeoUtils import *
 
 
-# Create points
-arr = to_np_array('input.txt')
-# x = np.random.randint(0, 20, 20)
-# y = np.random.randint(0, 20, 20)
+# Generate points
+#arr = to_np_array('input.txt')
+x, y = np.random.randint(0, 200, 30), np.random.randint(0, 200, 30)
+arr = np.array([*zip(x, y)], dtype=float)
 
-
-# Generate Convex Hull
+# Compute Convex Hull
 convex_hull(arr)
 
-
 # Plot results
-# plt.plot([0, 3], [0, 3], 'r--')
 plt.show()
 
 
